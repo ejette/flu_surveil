@@ -1,6 +1,6 @@
 setwd("~/flu_surveil_data")
-source("first_r2s.R")
-source("varSelect.R")
+source("~/flu_surveil/first_r2s.R")
+source("~/flu_surveil/varSelect.R")
 library(pcaMethods)
 
 load("~/flu_surveil_data/flu_gold.Rda")
