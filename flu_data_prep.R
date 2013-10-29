@@ -3,7 +3,7 @@ library(reshape)
 setwd("~/flu_surveil_data")
 
 ili <- read.csv("~/Downloads/ProviderILI.txt")
-mmwr <- read.csv("mmwr.csv")
+summmmwr <- read.csv("mmwr.csv")
 
 # create a total category in the ILI network data
 attach(ili)
