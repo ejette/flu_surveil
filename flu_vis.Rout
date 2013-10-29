@@ -1,0 +1,66 @@
+
+R version 2.15.2 (2012-10-26) -- "Trick or Treat"
+Copyright (C) 2012 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+Platform: x86_64-apple-darwin9.8.0/x86_64 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(ggplot2)
+> library(zoo)
+
+Attaching package: ‘zoo’
+
+The following object(s) are masked from ‘package:base’:
+
+    as.Date, as.Date.numeric
+
+> setwd("~/flu_surveil_data")
+> 
+> mmwr <- read.csv("mmwr.csv")
+> flu <- mmwr[,c('city','state','mmrw_week_year','pneum_flu')]
+> colnames(flu) <- c('city','state','date','deaths')
+> 
+> pdf(file="~/flu_surveil_data/flu_seasons.pdf")
+> 
+> start = 200845
+> end = 200914
+> start_yr = 2008
+> end_yr = 2012
+> par(mfrow=c(2,2))
+> cities = unique(flu[,c('city','state')])
+> 
+> for (j in 1:nrow(cities)){
++   for (i in 1:4){
++     start = start + 100
++     end = end + 100
++     test <- flu[which((flu$date >= start & flu$date <= end) & (flu$city == cities[j,1] & flu$state == cities[j,2])),]
++     date <- as.Date(paste(start_yr + i, '-11-03' , sep = "")) + seq(from = 1, to = 160, by = 7) - 1
++     plot <- zoo(test$deaths, date)
++     plot(plot, xlab = paste(start_yr+i,'Flu Season'), ylab = 'deaths', main = paste(cities[j,1],cities[j,2]))
++   }
++   start = 200845
++   end = 200914
++   start_yr = 2008
++   end_yr = 2012
++ }
+Error in plot.window(...) : need finite 'ylim' values
+Calls: plot ... do.call -> plot -> plot.default -> localWindow -> plot.window
+In addition: Warning messages:
+1: In min(x) : no non-missing arguments to min; returning Inf
+2: In max(x) : no non-missing arguments to max; returning -Inf
+3: In min(x) : no non-missing arguments to min; returning Inf
+4: In max(x) : no non-missing arguments to max; returning -Inf
+Execution halted
