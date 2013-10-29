@@ -3,11 +3,12 @@ source("~/flu_surveil/first_r2s.R")
 source("~/flu_surveil/varSelect.R")
 library(pcaMethods)
 
-load("~/flu_surveil_data/flu_gold.Rda")
-load("~/flu_surveil_data/ili_unique.Rda")
-load("~/flu_surveil_data/ili_wide_no_na.Rda")
-load("~/flu_surveil_data/ili_trim.Rda")
-load("~/flu_surveil_data/ili_counts.Rda")
+load("flu_gold.Rda")
+load("ili_unique.Rda")
+load("ili_wide_no_na.Rda")
+load('ili_wide.Rda')
+load("ili_trim.Rda")
+load("ili_counts.Rda")
 colnames(ili_counts) <- c('ids','n_reports')
 
 # read in the results from the regression
@@ -29,29 +30,31 @@ plot(first_R2s[,'r2s'], xlab = "Provider ID", ylab = "R^2", main = "R^2 for all 
 # reshape ili data so each date has only one row
 # make sure not all cells for a provider are NA
 ili_trim2_ca <- ili_trim[ili_trim$state == 'CA',c('phys_id','datecode','total')]
-ili_wide_ca <- reshape(ili_trim2_ca, v.names = 'total', idvar = 'datecode', timevar = 'phys_id', direction = 'wide')
+# get a list of all the Californian providers
+ids_ca <- as.character(unique(ili_trim2_ca$phys_id))
+# subset the data
+ili_wide_no_na_ca = ili_wide_no_na[,substr(colnames(ili_wide_no_na),7,100) %in% ids_ca]
 
-DATA <- t(ili_wide_ca[,-1])
+# the following commented code imputes the values just using the california providers
+#ili_wide_ca <- reshape(ili_trim2_ca, v.names = 'total', idvar = 'datecode', timevar = 'phys_id', direction = 'wide')
+#DATA <- t(ili_wide_ca[,-1])
 
 #running this commented command takes some time
 #PPCA<-pca(DATA, nPcs=ncol(DATA),method='ppca',center=TRUE,scale='vector')
 
 #it looks like 4 or 5 PCs is plenty, interestingly the first PC explains ~90% of the variance.  
-PPCA <-pca(DATA, nPcs=5,method='ppca',center=TRUE,scale='vector')
+#PPCA <-pca(DATA, nPcs=5,method='ppca',center=TRUE,scale='vector')
 
 #Impute missing data
-imputed_data_ca <-completeObs(PPCA)
-
-#put everything back together
-ili_wide_no_na_ca <-data.frame(ili_wide_ca[,1],t(imputed_data_ca))
+#imputed_data_ca <-completeObs(PPCA)
 
 # build a subset
-test_ca <- varSelect(obj = flu_gold[,2], vars = ili_wide_no_na_ca[,2:ncol(ili_wide_no_na_ca)], goal = 100, phys_look_up = ili_unique)
+test_ca <- varSelect(obj = flu_gold[,2], vars = ili_wide_no_na_ca, goal = 100, phys_look_up = ili_unique)
 
 save(test_ca, file = 'test_ca.Rda')
 
 # examine the final regression
-fit <- lm(flu_gold[,2] ~ test)
+fit <- lm(flu_gold[,2] ~ test_ca)
 summary(fit)
 hist(fit$residuals)
 plot(rstudent(fit))
