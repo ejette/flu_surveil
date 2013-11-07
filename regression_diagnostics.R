@@ -23,7 +23,9 @@ counts_sorted <- counts[order(counts$X),]
 plot(counts_sorted$X,counts_sorted$n_reports, xlab = "order added to regression", ylab = 'number of reports', main = 'Order provider was added to regression \n vs. number of provider reports')
 
 # 2. Plot the initial R^2 for all of the providers, it's possible that essentially it's a 2000 way tie.
+ili_unique$Phys_ID_Code <- str_trim(ili_unique$Phys_ID_Code)
 first_R2s = first_r2s(obj = flu_gold[,2], vars = ili_wide_no_na[,2:ncol(ili_wide_no_na)], phys_look_up = ili_unique)
+save(first_R2s,file = 'first_R2s.Rda')
 plot(first_R2s[,'r2s'], xlab = "Provider ID", ylab = "R^2", main = "R^2 for all providers in regression with \n only one covariate")
 
 # 3. Run a model with just providers in CA and see how that performs compared to the full model.

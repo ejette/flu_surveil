@@ -1,10 +1,11 @@
 load("~/flu_surveil_data/ili_wide.Rda")
 load("~/flu_surveil_data/ili_wide_no_na.Rda")
 load("~/flu_surveil_data/flu_gold.Rda")
+ili <- read.csv("~/Downloads/ProviderILI.txt")
 library(pcaMethods)
 
 setwd("~/flu_surveil_data")
-source("varSelect.R")
+source("~/flu_surveil/varSelect.R")
 
 ili_unique <- as.data.frame(as.matrix(unique(ili[,c('Phys_ID_Code','St','City')])), stringsAsFactors = FALSE)
 save(ili_unique, file = 'ili_unique.Rda')
@@ -21,7 +22,7 @@ imputed_data <-completeObs(PPCA)
 
 #put everything back together
 ili_wide_no_na <-data.frame(ili_wide[,1],t(imputed_data))
-save(ili_wide_no_na, file = "ili_wide_no_na.Rda")
+save(ili_wide_no_na, file = "~/flu_surveil_data/ili_wide_no_na.Rda")
 
 # build a subset
 test <- varSelect(obj = flu_gold[,2], vars = ili_wide_no_na[,2:ncol(ili_wide_no_na)], goal = 100, phys_look_up = ili_unique)

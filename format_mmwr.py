@@ -8,7 +8,7 @@ line = input.readline()
 while(line):
     print "old line: " + line 
     line = re.sub(r'-','0',line)
-    line = re.sub(r'U','NA',line)
+    line = re.sub(r'U,','NA,',line)
     print "new line: " + line
     output.write(line)
     line = input.readline()
