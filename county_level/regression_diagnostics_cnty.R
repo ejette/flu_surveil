@@ -5,22 +5,24 @@ library(pcaMethods)
 
 load("flu_gold.Rda")
 load("ili_unique.Rda")
-load("ili_wide_no_na.Rda")
-load('ili_wide.Rda')
-load("ili_trim.Rda")
-load("ili_counts.Rda")
+load("ili_wide_no_na_cnty.Rda")
+load('ili_wide_cnty.Rda')
+load("ili_cnty_counts.Rda")
 colnames(ili_counts) <- c('ids','n_reports')
 
 # read in the results from the regression
-flu_reg <- read.csv("file_R2s.csv")
+flu_reg <- read.csv("file_R2s_county_no_na2.csv")
 
 # 1. Rank order all the providers by number of reports and see how that maps onto order selected.
-ili_counts <- ili_counts[order(-ili_counts$n_reports),]
-flu_reg$ids <- substr(flu_reg$phys_ids,7,100)
+ili_cnty_counts <- ili_cnty_counts[order(-ili_cnty_counts$n_reports),]
+flu_reg$county <- substr(flu_reg$phys_ids,7,100)
+flu_reg$county = gsub("\\.", " ", flu_reg$county) 
 
-counts <- merge(flu_reg, ili_counts, by.x = 'ids', by.y = 'ids')
+counts <- merge(flu_reg, ili_cnty_counts, by.x = 'county', by.y = 'county')
 counts_sorted <- counts[order(counts$X),]
 plot(counts_sorted$X,counts_sorted$n_reports, xlab = "order added to regression", ylab = 'number of reports', main = 'Order provider was added to regression \n vs. number of provider reports')
+
+hist(counts$n_reports)
 
 # 2. Plot the initial R^2 for all of the providers, it's possible that essentially it's a 2000 way tie.
 ili_unique$Phys_ID_Code <- str_trim(ili_unique$Phys_ID_Code)
