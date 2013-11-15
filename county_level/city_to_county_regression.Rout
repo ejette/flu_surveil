@@ -1,0 +1,318 @@
+
+R version 2.15.2 (2012-10-26) -- "Trick or Treat"
+Copyright (C) 2012 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+Platform: x86_64-apple-darwin9.8.0/x86_64 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(reshape)
+Loading required package: plyr
+
+Attaching package: ‘reshape’
+
+The following object(s) are masked from ‘package:plyr’:
+
+    rename, round_any
+
+> library(plyr)
+> library(stringr)
+> library(ggplot2)
+> source("~/flu_surveil/county_level/var_select_cnty.R")
+> 
+> setwd("~/flu_surveil_data")
+> mmwr <- read.csv("mmwr.csv")
+> load("flu_gold.Rda")
+> load("ili_wide_no_na_cnty.Rda")
+> load('county_state.Rda')
+> 
+> 
+> # make set of y's for the regression
+> # each column is a city in the 122-cities
+> # and there is one column for the aggregated values
+> 
+> # city is not a unique identifier
+> # make a variable that is a combination of city and state
+> mmwr$city_state = paste(mmwr$city,mmwr$state,sep="_")
+> cities_temp = count(mmwr$city_state)
+> cities = c('national',as.character(cities_temp[,1]))
+> flu <- mmwr[which(mmwr$mmrw_week_year >= 200840 & mmwr$mmrw_week_year <= 201239),c('city_state','mmrw_week_year','pneum_flu')]
+> 
+> colnames(flu)[2:3] <- c('date', 'deaths')
+> 
+> # make data wide so there is column for each city
+> flu_wide <- reshape(flu, v.names = 'deaths', idvar = 'date', timevar = 'city_state', direction = 'wide')
+> flu_wide_sort = flu_wide[order(flu_wide$date),]
+> 
+> flu_gold_all = cbind(flu_gold,flu_wide_sort[,-1])
+> colnames(flu_gold_all)[2] = 'deaths.national'
+> 
+> #cities = c('national',as.character(cities))
+> n_counties = 50
+> ranks = as.data.frame(1:n_counties)
+> colnames(ranks) = 'index'
+> r2_values = as.data.frame(1:n_counties)
+> colnames(ranks) = 'index'
+> save(r2_values, file = 'r2_values.Rda')
+> # remove new orleans from the cities because they have no data for the time period
+> flu_gold_all = flu_gold_all[,c(1:94,96:ncol(flu_gold_all))]
+> n = ncol(flu_gold_all)
+> 
+> for (i in 2:n){
++   print(i)
++   load('r2_values.Rda')
++   ranks = var_select_cnty(obj = flu_gold_all[,i], vars = ili_wide_no_na_cnty[,2:ncol(ili_wide_no_na_cnty)], goal = n_counties, state_look_up = county_state, r2_values = r2_values, ranks = ranks)
++   save(ranks,file = 'ranks.Rda')
++ }
+[1] 2
+[1] 3
+[1] 4
+[1] 5
+[1] 6
+[1] 7
+[1] 8
+[1] 9
+[1] 10
+[1] 11
+[1] 12
+[1] 13
+[1] 14
+[1] 15
+[1] 16
+[1] 17
+[1] 18
+[1] 19
+[1] 20
+[1] 21
+[1] 22
+[1] 23
+[1] 24
+[1] 25
+[1] 26
+[1] 27
+[1] 28
+[1] 29
+[1] 30
+[1] 31
+[1] 32
+[1] 33
+[1] 34
+[1] 35
+[1] 36
+[1] 37
+[1] 38
+[1] 39
+[1] 40
+[1] 41
+[1] 42
+[1] 43
+[1] 44
+[1] 45
+[1] 46
+[1] 47
+[1] 48
+[1] 49
+[1] 50
+[1] 51
+[1] 52
+[1] 53
+[1] 54
+[1] 55
+[1] 56
+[1] 57
+[1] 58
+[1] 59
+[1] 60
+[1] 61
+[1] 62
+[1] 63
+[1] 64
+[1] 65
+[1] 66
+[1] 67
+[1] 68
+[1] 69
+[1] 70
+[1] 71
+[1] 72
+[1] 73
+[1] 74
+[1] 75
+[1] 76
+[1] 77
+[1] 78
+[1] 79
+[1] 80
+[1] 81
+[1] 82
+[1] 83
+[1] 84
+[1] 85
+[1] 86
+[1] 87
+[1] 88
+[1] 89
+[1] 90
+[1] 91
+[1] 92
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+there was a tie 
+ 
+[1] 93
+[1] 94
+[1] 95
+[1] 96
+[1] 97
+[1] 98
+[1] 99
+[1] 100
+[1] 101
+[1] 102
+[1] 103
+[1] 104
+[1] 105
+[1] 106
+[1] 107
+[1] 108
+[1] 109
+[1] 110
+[1] 111
+[1] 112
+[1] 113
+[1] 114
+[1] 115
+[1] 116
+[1] 117
+[1] 118
+[1] 119
+[1] 120
+[1] 121
+[1] 122
+[1] 123
+> 
+> #ranks_temp = ranks[,1:123]
+> ranks_temp = ranks
+> save(ranks_temp,file = 'ranks_temp.Rda')
+> load('r2_values.Rda')
+> cities = c(cities[1:94],cities[96:n])
+> colnames(ranks_temp)[2:n] = cities[1:n-1]
+> 
+> ranks_long = melt(ranks_temp, id.vars = 'index')
+> names(ranks_long)=c("color","x","y")
+> ranks_long$color=as.numeric(ranks_long$color)
+> 
+> pdf(file="regression_heatmap.pdf",width = 18, height = 18)
+> qplot(x, y, fill=color , data=ranks_long , geom='tile') + 
++   geom_tile(aes(fill = color), colour = "white") + 
++   scale_fill_gradient(low = "white", high = "steelblue") + 
++   scale_x_discrete("", expand = c(0, 0)) + 
++   scale_y_discrete("", expand = c(0, 0)) + 
++   theme_grey(base_size = 9) + 
++   theme(#legend.position = "none",
++     axis.ticks = element_blank(), 
++     axis.text.x = element_text(angle = 300, hjust = 0))
+> 
+> ggplot(data =  ranks_long, aes(x = x, y = y))  + 
++   geom_tile(aes(fill = color), colour = "white") + 
++   scale_fill_gradient(low = "white", high = "steelblue") + 
++   scale_x_discrete("", expand = c(0, 0)) + 
++   scale_y_discrete("", expand = c(0, 0)) + 
++   theme_grey(base_size = 9) + 
++   theme(#legend.position = "none",
++         axis.ticks = element_blank(), 
++         axis.text.x = element_text(angle = 300, hjust = 0))
+> 
+> 
+> #ggplot(data =  ranks_long, aes(x = x, y = y))  + 
+>  # geom_tile(aes(fill = color), colour = "white") +
+>   #scale_fill_brewer(palette = "PRGn") +   theme_grey(base_size = 9) + 
+>   #theme(legend.position = "none",
+>    #     axis.ticks = element_blank(), 
+>     #    axis.text.x = element_text(angle = 300, hjust = 0))
+> 
+> dev.off()
+null device 
+          1 
+> 
+> proc.time()
+     user    system   elapsed 
+20046.495   941.554 20988.011 

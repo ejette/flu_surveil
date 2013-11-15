@@ -57,6 +57,8 @@ save(ili_cnty, file = 'ili_cnty.Rda')
 # test to see if county and state combinations are unique
 test_df = ili[,c('county','state')]
 test_combos = count(test_df)
+county_state = test_combos
+save(county_state, file = 'county_state.Rda')
 test_combos2 = as.data.frame(table(test_combos[,'county']))
 test_combos_sub <- subset(test_combos2, test_combos2$Freq > 1)
 
@@ -68,6 +70,7 @@ ili_trim_cnty = ili_trim_cnty[order(ili_cnty_agg$county,ili_cnty_agg$date),]
 ili_cnty_agg <- aggregate(total ~ date + county, data = ili_trim_cnty, FUN = sum)
 
 # aggregate ili providers by how many reports they submit
+ili_county_states = unique(ili_cnty[,c(ili_cnty$county, ili_cnty$state)])
 ili_cnty_counts <- as.data.frame(table(ili_cnty$county))
 colnames(ili_cnty_counts) <- c('county','n_reports')
 

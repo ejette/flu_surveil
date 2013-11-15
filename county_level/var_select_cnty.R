@@ -1,4 +1,4 @@
-varSelect<-function(obj,vars,goal=1, state_look_up, r2_values, ranks){
+var_select_cnty <- function(obj,vars,goal=1, state_look_up, r2_values, ranks){
   # obj appears to be the goal timeseries
   # each provider appears to be a column in the pop matrix
   library('stringr')
@@ -38,21 +38,22 @@ varSelect<-function(obj,vars,goal=1, state_look_up, r2_values, ranks){
       #  add to the covariate matrix that has the column associated with the max Rsquared
 			selected <- matrix(pop[,maxR2],ncol=1)
 			colnames(selected)<-colnames(pop)[maxR2]
-      print(colnames(selected))
+      #print(colnames(selected))
       R2.selected<-c(R2.selected,r2s[maxR2])
       county.id <- strsplit(colnames(pop)[maxR2],'\\.')
+			#print(county.id)
       if (length(county.id[[1]]) == 2){
         # look up state
-        state = c(state, paste(county.id[[1]], state_look_up[state_look_up$county == county.id,'state'])
+        state = c(state, paste(county.id[[1]][2], state_look_up[state_look_up$county == county.id[[1]][2],'state']))
       }
-      if (length(county.id[[1]]) == 3){
-        state = c(state,paste(county.id[[1]][[2]],county.id[[1]][3])
+      if (length(county.id[[1]]) >= 3){
+        state = c(state,paste(county.id[[1]][2:length(county.id[[1]])], collapse = ' '))
       }
       # take out the column of the provider who gave the max R^2
-			pop<-pop[,-maxR2]
+			pop <- pop[,-maxR2]
 			}else{
 				r2s<-c()
-				for(j in 1:ncol(pop)){
+				for (j in 1:ncol(pop)){
 				m.j <- lm(obj~cbind(selected,pop[,j]))
 				r2.j <- summary(m.j)$r.squared
 				r2s <- c(r2s,r2.j)
@@ -63,21 +64,24 @@ varSelect<-function(obj,vars,goal=1, state_look_up, r2_values, ranks){
 				maxR2=maxR2[1]
 			}
 			selected <- cbind(selected,pop[,maxR2])
+			#print(colnames(selected)[i])
 			colnames(selected)[k] <- colnames(pop)[maxR2]
 			R2.selected <- c(R2.selected,r2s[maxR2])
 			county.id <- strsplit(colnames(pop)[maxR2],'\\.')
+     # print(county.id)
 			if (length(county.id[[1]]) == 2){
-			  # look up state
-			  state = c(state, phys_look_up[phys_look_up$county == county.id,'state'])
+				# look up state
+				state = c(state, paste(county.id[[1]][2], state_look_up[state_look_up$county == county.id[[1]][2],'state']))
+       # print(state)
 			}
-			if (length(county.id[[1]]) == 3){
-			  state = c(state,county.id[[1]][3])
+			if (length(county.id[[1]]) >= 3){
+				state = c(state,paste(county.id[[1]][2:length(county.id[[1]])], collapse = ' '))
 			}
 			pop<-pop[,-maxR2]
 			}#end if/else
 		}#end for k
   ranks = cbind(ranks, state)
   r2_values = cbind(r2_values,R2.selected)
-  save(r2_values,file = '~\flu_surveil_data\r2_values.Rda')
+  save(r2_values,file = 'r2_values.Rda')
 	return(ranks)
 }#end func

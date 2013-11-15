@@ -1,0 +1,92 @@
+library(reshape)
+library(plyr)
+library(stringr)
+library(ggplot2)
+source("~/flu_surveil/county_level/var_select_cnty.R")
+
+setwd("~/flu_surveil_data")
+mmwr <- read.csv("mmwr.csv")
+load("flu_gold.Rda")
+load("ili_wide_no_na_cnty.Rda")
+load('county_state.Rda')
+
+
+# make set of y's for the regression
+# each column is a city in the 122-cities
+# and there is one column for the aggregated values
+
+# city is not a unique identifier
+# make a variable that is a combination of city and state
+mmwr$city_state = paste(mmwr$city,mmwr$state,sep="_")
+cities_temp = count(mmwr$city_state)
+cities = c('national',as.character(cities_temp[,1]))
+flu <- mmwr[which(mmwr$mmrw_week_year >= 200840 & mmwr$mmrw_week_year <= 201239),c('city_state','mmrw_week_year','pneum_flu')]
+
+colnames(flu)[2:3] <- c('date', 'deaths')
+
+# make data wide so there is column for each city
+flu_wide <- reshape(flu, v.names = 'deaths', idvar = 'date', timevar = 'city_state', direction = 'wide')
+flu_wide_sort = flu_wide[order(flu_wide$date),]
+
+flu_gold_all = cbind(flu_gold,flu_wide_sort[,-1])
+colnames(flu_gold_all)[2] = 'deaths.national'
+
+#cities = c('national',as.character(cities))
+n_counties = 50
+ranks = as.data.frame(1:n_counties)
+colnames(ranks) = 'index'
+r2_values = as.data.frame(1:n_counties)
+colnames(ranks) = 'index'
+save(r2_values, file = 'r2_values.Rda')
+# remove new orleans from the cities because they have no data for the time period
+flu_gold_all = flu_gold_all[,c(1:94,96:ncol(flu_gold_all))]
+n = ncol(flu_gold_all)
+
+for (i in 2:n){
+  print(i)
+  load('r2_values.Rda')
+  ranks = var_select_cnty(obj = flu_gold_all[,i], vars = ili_wide_no_na_cnty[,2:ncol(ili_wide_no_na_cnty)], goal = n_counties, state_look_up = county_state, r2_values = r2_values, ranks = ranks)
+  save(ranks,file = 'ranks.Rda')
+}
+
+#ranks_temp = ranks[,1:123]
+ranks_temp = ranks
+save(ranks_temp,file = 'ranks_temp.Rda')
+load('r2_values.Rda')
+cities = c(cities[1:94],cities[96:n])
+colnames(ranks_temp)[2:n] = cities[1:n-1]
+
+ranks_long = melt(ranks_temp, id.vars = 'index')
+names(ranks_long)=c("color","x","y")
+ranks_long$color=as.numeric(ranks_long$color)
+
+pdf(file="regression_heatmap.pdf",width = 18, height = 18)
+qplot(x, y, fill=color , data=ranks_long , geom='tile') + 
+  geom_tile(aes(fill = color), colour = "white") + 
+  scale_fill_gradient(low = "white", high = "steelblue") + 
+  scale_x_discrete("", expand = c(0, 0)) + 
+  scale_y_discrete("", expand = c(0, 0)) + 
+  theme_grey(base_size = 9) + 
+  theme(#legend.position = "none",
+    axis.ticks = element_blank(), 
+    axis.text.x = element_text(angle = 300, hjust = 0))
+
+ggplot(data =  ranks_long, aes(x = x, y = y))  + 
+  geom_tile(aes(fill = color), colour = "white") + 
+  scale_fill_gradient(low = "white", high = "steelblue") + 
+  scale_x_discrete("", expand = c(0, 0)) + 
+  scale_y_discrete("", expand = c(0, 0)) + 
+  theme_grey(base_size = 9) + 
+  theme(#legend.position = "none",
+        axis.ticks = element_blank(), 
+        axis.text.x = element_text(angle = 300, hjust = 0))
+
+
+#ggplot(data =  ranks_long, aes(x = x, y = y))  + 
+ # geom_tile(aes(fill = color), colour = "white") +
+  #scale_fill_brewer(palette = "PRGn") +   theme_grey(base_size = 9) + 
+  #theme(legend.position = "none",
+   #     axis.ticks = element_blank(), 
+    #    axis.text.x = element_text(angle = 300, hjust = 0))
+
+dev.off()
