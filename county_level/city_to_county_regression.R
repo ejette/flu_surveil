@@ -42,44 +42,43 @@ save(r2_values, file = 'r2_values.Rda')
 flu_gold_all = flu_gold_all[,c(1:94,96:ncol(flu_gold_all))]
 n = ncol(flu_gold_all)
 
-for (i in 2:n){
-  print(i)
-  load('r2_values.Rda')
-  ranks = var_select_cnty(obj = flu_gold_all[,i], vars = ili_wide_no_na_cnty[,2:ncol(ili_wide_no_na_cnty)], goal = n_counties, state_look_up = county_state, r2_values = r2_values, ranks = ranks)
-  save(ranks,file = 'ranks.Rda')
-}
+# for (i in 2:n){
+#   print(i)
+#   load('r2_values.Rda')
+#   ranks = var_select_cnty(obj = flu_gold_all[,i], vars = ili_wide_no_na_cnty[,2:ncol(ili_wide_no_na_cnty)], goal = n_counties, state_look_up = county_state, r2_values = r2_values, ranks = ranks)
+#   save(ranks,file = 'ranks.Rda')
+# }
 
 #ranks_temp = ranks[,1:123]
 ranks_temp = ranks
 save(ranks_temp,file = 'ranks_temp.Rda')
 load('r2_values.Rda')
-cities = c(cities[1:94],cities[96:n])
-colnames(ranks_temp)[2:n] = cities[1:n-1]
+#cities = c(cities[1:94],cities[96:n])
+cols = substr(colnames(flu_gold_all),8,100)
+cols2 = cols[c(2:94,96:124)]
+#cities2 = cities[cities != 'New Orleans_LA']
+colnames(ranks_temp)[2:ncol(ranks_temp)] = cols2
 
 ranks_long = melt(ranks_temp, id.vars = 'index')
 names(ranks_long)=c("color","x","y")
 ranks_long$color=as.numeric(ranks_long$color)
 
-pdf(file="regression_heatmap.pdf",width = 18, height = 18)
-qplot(x, y, fill=color , data=ranks_long , geom='tile') + 
-  geom_tile(aes(fill = color), colour = "white") + 
-  scale_fill_gradient(low = "white", high = "steelblue") + 
-  scale_x_discrete("", expand = c(0, 0)) + 
-  scale_y_discrete("", expand = c(0, 0)) + 
-  theme_grey(base_size = 9) + 
-  theme(#legend.position = "none",
-    axis.ticks = element_blank(), 
-    axis.text.x = element_text(angle = 300, hjust = 0))
+ranks_long1 = ranks_long[1:1500,]
+ranks_long2 = ranks_long[1501:nrow(ranks_long),]
 
+pdf(file="regression_heatmap.pdf",width = 36, height = 36)
 ggplot(data =  ranks_long, aes(x = x, y = y))  + 
   geom_tile(aes(fill = color), colour = "white") + 
-  scale_fill_gradient(low = "white", high = "steelblue") + 
+  scale_fill_gradient(low = "steelblue", high = "ghostwhite") + 
   scale_x_discrete("", expand = c(0, 0)) + 
   scale_y_discrete("", expand = c(0, 0)) + 
   theme_grey(base_size = 9) + 
   theme(#legend.position = "none",
         axis.ticks = element_blank(), 
-        axis.text.x = element_text(angle = 300, hjust = 0))
+        axis.text.x = element_text(angle = 300, hjust = 0),
+        axis.text.y = element_text(size = 2)) + labs(title = 'Rankings of ILI counties picked to predict \n gold standard time series, the 122 cities data for \n Week 40 of 2008 to Week 20 of 2012',
+                                                     x = '122 Cities',
+                                                     y = 'ILI Counties') 
 
 
 #ggplot(data =  ranks_long, aes(x = x, y = y))  + 
@@ -90,3 +89,14 @@ ggplot(data =  ranks_long, aes(x = x, y = y))  +
     #    axis.text.x = element_text(angle = 300, hjust = 0))
 
 dev.off()
+attach(ranks_long)
+ranks_long$score = 0
+j = 5
+for (i in seq(1,50,by=10)){
+  print(i)
+  ranks_long$score[color >= i & color <= (i + 9)] = j
+  j = j - 1
+}
+
+ranks_pts <- aggregate(score ~ y, data = ranks_long[,c('score','y')], FUN = sum)
+table(ranks_pts$score)
