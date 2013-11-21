@@ -2,15 +2,15 @@ library(reshape)
 library(plyr)
 library(stringr)
 
+ili <- read.csv("~/Downloads/ProviderILI.txt")
 setwd("~/flu_surveil_data")
 
-ili <- read.csv("~/Downloads/ProviderILI.txt")
 mmwr <- read.csv("mmwr.csv")
 
 # create a total category in the ILI network data
 attach(ili)
-ili$total <- rowSums(ili[,c('Age_0_4','Age_5_24','Age_25_64',
-                                      'Age_25_49','Age_50_64','Age_65_and_older')], na.rm = TRUE)
+ili$cases <- rowSums(ili[,c('Age_0_4','Age_5_24','Age_25_64',
+                            'Age_25_49','Age_50_64','Age_65_and_older')], na.rm = TRUE)
 detach(ili)
 
 ili = ili[order(ili$Phys_ID_Code, ili$datecode),]
@@ -31,7 +31,7 @@ ili$county[ili$county == 'FAIRFAX CITY'] = 'FAIRFAX'
 ili$county[ili$county == 'FAIRFILED'] = 'FAIRFIELD'
 ili$county[ili$county == 'CHESAPEAKE CITY'] = 'CHESAPEAKE'
 
-cnty = ili[,c('county','state','total')]
+cnty = ili[,c('county','state','cases')]
 cnty$state = as.factor(cnty$state)
 cnty$county = as.factor(cnty$county)
 
@@ -62,15 +62,19 @@ save(county_state, file = 'county_state.Rda')
 test_combos2 = as.data.frame(table(test_combos[,'county']))
 test_combos_sub <- subset(test_combos2, test_combos2$Freq > 1)
 
-ili_trim_cnty <- ili_cnty[,c('datecode','county','total')]
-colnames(ili_trim_cnty) <- c('date','county','total')
+ili_trim_cnty <- ili_cnty[,c('datecode','county','cases','totalpt')]
+colnames(ili_trim_cnty) <- c('date','county','cases','total_pt')
 
 # aggregate to county level
-ili_trim_cnty = ili_trim_cnty[order(ili_cnty_agg$county,ili_cnty_agg$date),]
-ili_cnty_agg <- aggregate(total ~ date + county, data = ili_trim_cnty, FUN = sum)
+ili_trim_cnty = ili_trim_cnty[order(ili_trim_cnty$county,ili_trim_cnty$date),]
+#ili_cnty_agg <- aggregate(total + total_pt ~ date + county, data = ili_trim_cnty, FUN = sum)
+ili_cnty_agg <- aggregate(. ~ date + county, data = ili_trim_cnty, FUN = sum)
+ili_cnty_agg$total_pt2[ili_cnty_agg$cases == 0 & ili_cnty_agg$total_pt == 0] = 1
+ili_cnty_agg$total = ili_cnty_agg$cases/ifelse(ili_cnty_agg$total_pt == 0, NA, ili_cnty_agg$total_pt)
+ili_cnty_agg = ili_cnty_agg[,c('date','county','total')]
 
 # aggregate ili providers by how many reports they submit
-ili_county_states = unique(ili_cnty[,c(ili_cnty$county, ili_cnty$state)])
+#ili_county_states = unique(ili_cnty[,c(ili_cnty$county, ili_cnty$state)])
 ili_cnty_counts <- as.data.frame(table(ili_cnty$county))
 colnames(ili_cnty_counts) <- c('county','n_reports')
 

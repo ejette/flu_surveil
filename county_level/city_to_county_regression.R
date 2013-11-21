@@ -42,12 +42,12 @@ save(r2_values, file = 'r2_values.Rda')
 flu_gold_all = flu_gold_all[,c(1:94,96:ncol(flu_gold_all))]
 n = ncol(flu_gold_all)
 
-# for (i in 2:n){
-#   print(i)
-#   load('r2_values.Rda')
-#   ranks = var_select_cnty(obj = flu_gold_all[,i], vars = ili_wide_no_na_cnty[,2:ncol(ili_wide_no_na_cnty)], goal = n_counties, state_look_up = county_state, r2_values = r2_values, ranks = ranks)
-#   save(ranks,file = 'ranks.Rda')
-# }
+for (i in 2:n){
+   print(i)
+   load('r2_values.Rda')
+   ranks = var_select_cnty(obj = flu_gold_all[,i], vars = ili_wide_no_na_cnty[,2:ncol(ili_wide_no_na_cnty)], goal = n_counties, state_look_up = county_state, r2_values = r2_values, ranks = ranks)
+   save(ranks,file = 'ranks.Rda')
+ }
 
 #ranks_temp = ranks[,1:123]
 ranks_temp = ranks
@@ -90,7 +90,7 @@ ggplot(data =  ranks_long, aes(x = x, y = y))  +
 
 dev.off()
 attach(ranks_long)
-ranks_long$score = 0
+ranks_long$score = 1/ranks_long$color
 j = 5
 for (i in seq(1,50,by=10)){
   print(i)

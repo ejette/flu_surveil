@@ -71,11 +71,11 @@ The following object(s) are masked from ‘package:plyr’:
 > n = ncol(flu_gold_all)
 > 
 > for (i in 2:n){
-+   print(i)
-+   load('r2_values.Rda')
-+   ranks = var_select_cnty(obj = flu_gold_all[,i], vars = ili_wide_no_na_cnty[,2:ncol(ili_wide_no_na_cnty)], goal = n_counties, state_look_up = county_state, r2_values = r2_values, ranks = ranks)
-+   save(ranks,file = 'ranks.Rda')
-+ }
++    print(i)
++    load('r2_values.Rda')
++    ranks = var_select_cnty(obj = flu_gold_all[,i], vars = ili_wide_no_na_cnty[,2:ncol(ili_wide_no_na_cnty)], goal = n_counties, state_look_up = county_state, r2_values = r2_values, ranks = ranks)
++    save(ranks,file = 'ranks.Rda')
++  }
 [1] 2
 [1] 3
 [1] 4
@@ -273,46 +273,13 @@ there was a tie
 > ranks_temp = ranks
 > save(ranks_temp,file = 'ranks_temp.Rda')
 > load('r2_values.Rda')
-> cities = c(cities[1:94],cities[96:n])
-> colnames(ranks_temp)[2:n] = cities[1:n-1]
+> #cities = c(cities[1:94],cities[96:n])
+> cols = substr(colnames(flu_gold_all),8,100)
+> cols2 = cols[c(2:94,96:124)]
+> #cities2 = cities[cities != 'New Orleans_LA']
+> colnames(ranks_temp)[2:ncol(ranks_temp)] = cols2
 > 
 > ranks_long = melt(ranks_temp, id.vars = 'index')
-> names(ranks_long)=c("color","x","y")
-> ranks_long$color=as.numeric(ranks_long$color)
-> 
-> pdf(file="regression_heatmap.pdf",width = 18, height = 18)
-> qplot(x, y, fill=color , data=ranks_long , geom='tile') + 
-+   geom_tile(aes(fill = color), colour = "white") + 
-+   scale_fill_gradient(low = "white", high = "steelblue") + 
-+   scale_x_discrete("", expand = c(0, 0)) + 
-+   scale_y_discrete("", expand = c(0, 0)) + 
-+   theme_grey(base_size = 9) + 
-+   theme(#legend.position = "none",
-+     axis.ticks = element_blank(), 
-+     axis.text.x = element_text(angle = 300, hjust = 0))
-> 
-> ggplot(data =  ranks_long, aes(x = x, y = y))  + 
-+   geom_tile(aes(fill = color), colour = "white") + 
-+   scale_fill_gradient(low = "white", high = "steelblue") + 
-+   scale_x_discrete("", expand = c(0, 0)) + 
-+   scale_y_discrete("", expand = c(0, 0)) + 
-+   theme_grey(base_size = 9) + 
-+   theme(#legend.position = "none",
-+         axis.ticks = element_blank(), 
-+         axis.text.x = element_text(angle = 300, hjust = 0))
-> 
-> 
-> #ggplot(data =  ranks_long, aes(x = x, y = y))  + 
->  # geom_tile(aes(fill = color), colour = "white") +
->   #scale_fill_brewer(palette = "PRGn") +   theme_grey(base_size = 9) + 
->   #theme(legend.position = "none",
->    #     axis.ticks = element_blank(), 
->     #    axis.text.x = element_text(angle = 300, hjust = 0))
-> 
-> dev.off()
-null device 
-          1 
-> 
-> proc.time()
-     user    system   elapsed 
-20046.495   941.554 20988.011 
+Error in `[.data.frame`(data, , x) : undefined columns selected
+Calls: melt ... do.call -> lapply -> FUN -> data.frame -> [ -> [.data.frame
+Execution halted
