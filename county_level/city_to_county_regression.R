@@ -7,6 +7,7 @@ source("~/flu_surveil/county_level/var_select_cnty.R")
 setwd("~/flu_surveil_data")
 mmwr <- read.csv("mmwr.csv")
 load("flu_gold.Rda")
+load("flu_gold_all.Rda")
 load("ili_wide_no_na_cnty.Rda")
 load('county_state.Rda')
 
@@ -16,20 +17,21 @@ load('county_state.Rda')
 # and there is one column for the aggregated values
 
 # city is not a unique identifier
-# make a variable that is a combination of city and state
-mmwr$city_state = paste(mmwr$city,mmwr$state,sep="_")
-cities_temp = count(mmwr$city_state)
-cities = c('national',as.character(cities_temp[,1]))
-flu <- mmwr[which(mmwr$mmrw_week_year >= 200840 & mmwr$mmrw_week_year <= 201239),c('city_state','mmrw_week_year','pneum_flu')]
-
-colnames(flu)[2:3] <- c('date', 'deaths')
-
-# make data wide so there is column for each city
-flu_wide <- reshape(flu, v.names = 'deaths', idvar = 'date', timevar = 'city_state', direction = 'wide')
-flu_wide_sort = flu_wide[order(flu_wide$date),]
-
-flu_gold_all = cbind(flu_gold,flu_wide_sort[,-1])
-colnames(flu_gold_all)[2] = 'deaths.national'
+# # make a variable that is a combination of city and state
+# mmwr$city_state = paste(mmwr$city,mmwr$state,sep="_")
+# cities_temp = count(mmwr$city_state)
+# cities = c('national',as.character(cities_temp[,1]))
+# flu <- mmwr[which(mmwr$mmrw_week_year >= 200840 & mmwr$mmrw_week_year <= 201239),c('city_state','mmrw_week_year','pneum_flu')]
+# 
+# colnames(flu)[2:3] <- c('date', 'deaths')
+# 
+# # make data wide so there is column for each city
+# flu_wide <- reshape(flu, v.names = 'deaths', idvar = 'date', timevar = 'city_state', direction = 'wide')
+# flu_wide_sort = flu_wide[order(flu_wide$date),]
+# 
+# flu_gold_all = cbind(flu_gold,flu_wide_sort[,-1])
+# colnames(flu_gold_all)[2] = 'deaths.national'
+# save(flu_gold_all, file = 'flu_gold_all.Rda')
 
 #cities = c('national',as.character(cities))
 n_counties = 50
@@ -50,6 +52,7 @@ for (i in 2:n){
  }
 
 #ranks_temp = ranks[,1:123]
+load('ranks.Rda')
 ranks_temp = ranks
 save(ranks_temp,file = 'ranks_temp.Rda')
 load('r2_values.Rda')
@@ -91,12 +94,12 @@ ggplot(data =  ranks_long, aes(x = x, y = y))  +
 dev.off()
 attach(ranks_long)
 ranks_long$score = 1/ranks_long$color
-j = 5
-for (i in seq(1,50,by=10)){
-  print(i)
-  ranks_long$score[color >= i & color <= (i + 9)] = j
-  j = j - 1
-}
+#j = 5
+#for (i in seq(1,50,by=10)){
+ # print(i)
+#  ranks_long$score[color >= i & color <= (i + 9)] = j
+ # j = j - 1
+#}
 
 ranks_pts <- aggregate(score ~ y, data = ranks_long[,c('score','y')], FUN = sum)
 table(ranks_pts$score)

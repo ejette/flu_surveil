@@ -1,4 +1,4 @@
-var_select_cnty <- function(obj,vars,goal=1, state_look_up, r2_values, ranks){
+var_select_cnty <- function(obj,vars,goal=1, r2_values, ranks){
   # obj appears to be the goal timeseries
   # each provider appears to be a column in the pop matrix
   library('stringr')
@@ -40,15 +40,14 @@ var_select_cnty <- function(obj,vars,goal=1, state_look_up, r2_values, ranks){
 			colnames(selected)<-colnames(pop)[maxR2]
       #print(colnames(selected))
       R2.selected<-c(R2.selected,r2s[maxR2])
-      county.id <- strsplit(colnames(pop)[maxR2],'\\.')
 			#print(county.id)
-      if (length(county.id[[1]]) == 2){
-        # look up state
-        state = c(state, paste(county.id[[1]][2], state_look_up[state_look_up$county == county.id[[1]][2],'state']))
-      }
-      if (length(county.id[[1]]) >= 3){
-        state = c(state,paste(county.id[[1]][2:length(county.id[[1]])], collapse = ' '))
-      }
+      x = substr(colnames(pop)[maxR2],7,100)
+			x = gsub("\\."," ",x)
+			x = gsub("St ","St.",x)
+			x1 = substr(x,1,2)
+			x2 = substr(x,4,100)
+			st = paste(x1,x2,sep='-')
+      state = c(state, st)
       # take out the column of the provider who gave the max R^2
 			pop <- pop[,-maxR2]
 			}else{
@@ -67,16 +66,13 @@ var_select_cnty <- function(obj,vars,goal=1, state_look_up, r2_values, ranks){
 			#print(colnames(selected)[i])
 			colnames(selected)[k] <- colnames(pop)[maxR2]
 			R2.selected <- c(R2.selected,r2s[maxR2])
-			county.id <- strsplit(colnames(pop)[maxR2],'\\.')
-     # print(county.id)
-			if (length(county.id[[1]]) == 2){
-				# look up state
-				state = c(state, paste(county.id[[1]][2], state_look_up[state_look_up$county == county.id[[1]][2],'state']))
-       # print(state)
-			}
-			if (length(county.id[[1]]) >= 3){
-				state = c(state,paste(county.id[[1]][2:length(county.id[[1]])], collapse = ' '))
-			}
+			x = substr(colnames(pop)[maxR2],7,100)
+			x = gsub("\\."," ",x)
+			x = gsub("St ","St.",x)
+			x1 = substr(x,1,2)
+			x2 = substr(x,4,100)
+			st = paste(x1,x2,sep='-')
+			state = c(state, st)
 			pop<-pop[,-maxR2]
 			}#end if/else
 		}#end for k

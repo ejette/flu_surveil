@@ -2,12 +2,13 @@ load("~/flu_surveil_data/ili_wide_cnty.Rda")
 #load("~/flu_surveil_data/ili_wide_no_na.Rda")
 load("~/flu_surveil_data/flu_gold.Rda")
 load("county_state.Rda")
-ili <- read.csv("~/Downloads/ProviderILI.txt")
+load('flu_gold_all.Rda')
+#ili <- read.csv("~/Downloads/ProviderILI.txt")
 library(pcaMethods)
 
 setwd("~/flu_surveil_data")
 source("~/flu_surveil/county_level/var_select_cnty.R")
-load('ili_unique.Rda')
+#load('ili_unique.Rda')
 
 DATA <- t(ili_wide_cnty[,-1])
 
@@ -15,7 +16,7 @@ DATA <- t(ili_wide_cnty[,-1])
 #PPCA<-pca(DATA, nPcs=ncol(DATA),method='ppca',center=TRUE,scale='vector')
 
 #it looks like 4 or 5 PCs is plenty, interestingly the first PC explains ~90% of the variance.  
-PPCA<-pca(DATA, nPcs=14,method='ppca',center=TRUE,scale='vector')
+PPCA<-pca(DATA, nPcs=4,method='ppca',center=TRUE,scale='vector')
 #PPCA2 <- pca(t(ili_wide[,-1]),nPcs=5,method='ppca',center=TRUE,scale='vector')
 #Impute missing data
 imputed_data <-completeObs(PPCA)
@@ -34,7 +35,7 @@ save(ili_wide_no_na_cnty, file = "~/flu_surveil_data/ili_wide_no_na_cnty.Rda")
 # 1      23      46     253     108  201200 
 
 # build a subset
-n_counties = 100
+n_counties = 50
 ranks = as.data.frame(1:n_counties)
 colnames(ranks) = 'index'
 r2_values = as.data.frame(1:n_counties)
@@ -44,7 +45,7 @@ save(r2_values, file = 'r2_values.Rda')
 flu_gold_all = flu_gold_all[,c(1:94,96:ncol(flu_gold_all))]
 n = ncol(flu_gold_all)
 
-ranks = var_select_cnty(obj = flu_gold[,2], vars = ili_wide_no_na_cnty[,2:ncol(ili_wide_no_na_cnty)], goal = n_counties, state_look_up = county_state, r2_values = r2_values, ranks = ranks)
+ranks = var_select_cnty(obj = flu_gold[,2], vars = ili_wide_no_na_cnty[,2:ncol(ili_wide_no_na_cnty)], goal = n_counties, r2_values = r2_values, ranks = ranks)
 
 ranks_no_zero = var_select_cnty(obj = flu_gold[,2], vars = ili_wide_cnty_zeros[,2:ncol(ili_wide_cnty_zeros)], goal = n_counties, state_look_up = county_state, r2_values = r2_values, ranks = ranks)
 
