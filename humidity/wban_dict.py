@@ -49,3 +49,98 @@ wban_dict = {'"AK"': ['25616', '46407', '26425', '26514', '46403'],
  '"WI"': ['94854', '54908', '14837', '4803', '94818'],
  '"WV"': ['3872', '13736', '63879', '3860', '53801'],
  '"WY"': ['24027', '24062', '94053', '24057', '24166']}
+ 
+keys = wban_dict.keys()
+ 
+# this file extracts relevant station data from hourlyYYYYMM.txt files
+# It extracts: wban (station id), date, dry bulb temperature, and relative humidity (this is a percentage)
+
+def list_diff(a, b):
+    # this function finds items in list a that are not in list b
+    b = set(b)
+    return [aa for aa in a if aa not in b]
+        
+def format_data(input_str, dict):
+    # process climate data
+    import re
+    # this will need to be changed if you are running this on a different machine of course :)
+    wd = '/Users/jj/cdc_predict/climate_data/'
+    out_dir = '/Users/jj/flu_surveil_data/humidity/'
+    # station codes
+    keys = dict.keys()
+    
+    dict_ls = []
+    for i in range(0,len(dict)):
+        for j in range(0,len(dict[keys[i]])):
+            dict_ls.append(dict[keys[i]][j])
+    station_dict = {}
+
+    input = open(wd + input_str +'.txt','r')
+    output = open(out_dir + input_str +'.csv','w')
+
+    line = input.readline()
+    # remove new line character
+    line_trim = line.rstrip()
+    # remove spaces and special characters
+    line_formatted = re.sub(r' |%|\\.|\\(|\\)','',line_trim)
+    # split into list
+    line_list = line_formatted.rsplit(',')
+
+    # extract the indices in the list that we are interested in
+    # comment the following line if you are processing 200708 to 2013 data
+    #indices = [line_list.index('WbanNumber'), line_list.index('YearMonthDay'), line_list.index('DryBulbTemp'),line_list.index('RelativeHumidity')]
+    # comment the following line if you are processing 2003 - 200708 data
+    indices = [line_list.index('WBAN'), line_list.index('Date'), line_list.index('DryBulbFarenheit'),line_list.index('RelativeHumidity')]
+    # take subset of line_list using the extracted indices
+    output_list = list(line_list[i] for i in indices)
+    output_line = ','.join(output_list) +',state' + '\n'
+    output.write(output_line)
+
+    line = input.readline()
+    # read through the rest of the file and extract the variables of interest
+    while line:   
+        line = input.readline()
+        line_trim = line.rstrip()
+        # replace '-' with 'NA'
+        line_na = re.sub('-','NA',line_trim)
+        # trim white space
+        line_format = re.sub(' ','',line_na)
+        line_list = line_format.rsplit(',')
+        #print line_list
+        if len(line_list) > 1:
+            output_list = list(line_list[i] for i in indices)
+        # keep observations associated with Wban numbers (i.e., the weather stations in the regions we want)
+        if output_list[0] in dict_ls:
+            station_dict[output_list[0]] = 1
+            output_line = ','.join(output_list) + ',' + [k for k, v in wban_dict.iteritems() if output_list[0] in v][0] + '\n'
+            output.write(output_line)
+        line = input.readline()
+
+    # check if all weather stations are present in the data set
+    #print input_str + ' ' + str(len(station_dict))
+    #if len(station_dict) < 250:
+     #   print list_diff(dict_ls, station_dict.keys())
+
+    station_dict = {}
+    input.close()
+    output.close()
+    
+# year range you want to process
+format_data('hourly200810', wban_dict)
+
+
+start_yr = 2008
+end_yr = 2014
+
+# months you want to process for each year
+# Note: this needs to be manipulated a bit if you're processing 2007 data because they switched variable names around
+#MM = ['01','02','03','04','05','06','07','08','09','10','11','12']
+#MM = ['08','09','10','11','12']
+
+# run preprocessing on each of the text files
+#for YYYY in range(start_yr,end_yr):
+ #   for i in range(0,len(MM)):
+  #      format_data('hourly'+str(YYYY)+str(MM[i]))
+
+format_data('hourly201312')# this file extracts relevant station data from hourlyYYYYMM.txt files
+# It extracts: wban (station id), date, dry bulb temperature, and relative humidity (this is a percentage)
