@@ -41,13 +41,13 @@ r2_values = as.data.frame(1:n_counties)
 colnames(ranks) = 'index'
 save(r2_values, file = 'r2_values.Rda')
 # remove new orleans from the cities because they have no data for the time period
-flu_gold_all = flu_gold_all[,c(1:94,96:ncol(flu_gold_all))]
+#flu_gold_all = flu_gold_all[,c(1:94,96:ncol(flu_gold_all))]
 n = ncol(flu_gold_all)
-
+#save(flu_gold_all, file = 'flu_gold_all.Rda')
 for (i in 2:n){
    print(i)
    load('r2_values.Rda')
-   ranks = var_select_cnty(obj = flu_gold_all[,i], vars = ili_wide_no_na_cnty[,2:ncol(ili_wide_no_na_cnty)], goal = n_counties, state_look_up = county_state, r2_values = r2_values, ranks = ranks)
+   ranks = var_select_cnty(obj = flu_gold_all[,i], vars = ili_wide_no_na_cnty[,2:ncol(ili_wide_no_na_cnty)], goal = n_counties, r2_values = r2_values, ranks = ranks)
    save(ranks,file = 'ranks.Rda')
  }
 
@@ -58,16 +58,17 @@ save(ranks_temp,file = 'ranks_temp.Rda')
 load('r2_values.Rda')
 #cities = c(cities[1:94],cities[96:n])
 cols = substr(colnames(flu_gold_all),8,100)
-cols2 = cols[c(2:94,96:124)]
+cols2 = cols[c(2:123)]
 #cities2 = cities[cities != 'New Orleans_LA']
 colnames(ranks_temp)[2:ncol(ranks_temp)] = cols2
 
 ranks_long = melt(ranks_temp, id.vars = 'index')
 names(ranks_long)=c("color","x","y")
 ranks_long$color=as.numeric(ranks_long$color)
-
-ranks_long1 = ranks_long[1:1500,]
-ranks_long2 = ranks_long[1501:nrow(ranks_long),]
+ranks_long_format = ranks_long
+save(ranks_long_format, file = 'ranks_long_format.Rda')
+#ranks_long1 = ranks_long[1:1500,]
+#ranks_long2 = ranks_long[1501:nrow(ranks_long),]
 
 pdf(file="regression_heatmap.pdf",width = 36, height = 36)
 ggplot(data =  ranks_long, aes(x = x, y = y))  + 

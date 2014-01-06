@@ -23,6 +23,7 @@ imputed_data <-completeObs(PPCA)
 
 #put everything back together
 ili_wide_no_na_cnty <-data.frame(ili_wide_cnty[,1],t(imputed_data))
+write.csv(ili_wide_no_na_cnty, file = 'ili_wide_no_na_cnty.csv')
 save(ili_wide_no_na_cnty, file = "~/flu_surveil_data/ili_wide_no_na_cnty.Rda")
 
 # mins = apply(ili_wide_no_na_cnty, 2, function(x) min(x[x!=0]) )

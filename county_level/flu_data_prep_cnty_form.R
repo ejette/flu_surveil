@@ -18,23 +18,44 @@ ili$county_temp = tolower(str_trim((as.character(ili$County))))
 ili$county_temp = gsub("\\b([a-z])([a-z]+)", "\\U\\1\\L\\2", ili$county_temp, perl=TRUE)
 ili$county_temp = gsub("\\.","",ili$county_temp)
 ili$county_temp = gsub("St ","St\\. ",ili$county_temp)
+#ili$county_temp = gsub("St\\.","Saint",ili$county_temp)
 ili$county_temp = gsub("-"," ",ili$county_temp)
 ili$county_temp[ili$County == ''] = 'New York'
-
+ili$St = str_trim(ili$St)
+ili$county_temp = str_trim(ili$county_temp)
 # make counties more uniform
 # replace periods with an empty string
-ili$county_temp[ili$county_temp == 'Virginia Beach' | ili$county_temp == 'Virginia Beach City'] = 'Princess Anne'
+ili$county_temp[ili$county_temp == 'Virginia Beach'] = 'Virginia Beach City'
+ili$county_temp[ili$county_temp == 'Concoridia'] = 'Concordia'
 ili$county_temp[ili$county_temp == 'Newport News'] = 'Newport News City'
 ili$county_temp[ili$county_temp == 'Frederickburg City'] = 'Fredericksburg City'
+ili$county_temp[ili$county_temp == 'Chesapeake'] = 'Chesapeake City'
 ili$county_temp[ili$county_temp == 'Fairfax City'] = 'Fairfax'
 ili$county_temp[ili$county_temp == 'Fairfiled'] = 'Fairfield'
-ili$county_temp[ili$county_temp == 'Chesapeake City'] = 'Chesapeake'
-ili$county_temp[ili$county_temp == 'Dekab' & ili$St == 'AL'] = 'Dekalb'
+ili$county_temp[ili$county_temp == 'Dekalb' & ili$St == 'AL'] = 'De Kalb'
+ili$county_temp[ili$county_temp == 'Dekab' & ili$St == 'AL'] = 'De Kalb'
 ili$county_temp[ili$county_temp == 'Lorian' & ili$St == 'OH'] = 'Lorain'
 ili$county_temp[which(ili$county_temp == 'Cordova' & ili$St == 'AK')] = 'Valdez Cordova'
+ili$county_temp[ili$county_temp == 'Miami Dade'] = 'Miami-Dade'
+ili$county_temp[ili$county_temp == 'Cleveland' & ili$St == 'MS'] = 'Bolivar'
+ili$county_temp[ili$county_temp == 'Dekalb' & ili$St == 'IL'] = 'De Kalb'
+ili$county_temp[ili$county_temp == 'Dekalb' & ili$St == 'IN'] = 'De Kalb'
+ili$county_temp[ili$county_temp == 'Dupage' & ili$St == 'IL'] = 'Du Page'
+ili$county_temp[ili$county_temp == 'Lasalle' & ili$St == 'IN'] = 'La Salle'
+ili$county_temp[ili$county_temp == 'Lasalle' & ili$St == 'IL'] = 'La Salle'
+ili$county_temp[ili$county_temp == 'Desoto' & ili$St == 'MS'] = 'De Soto'
+ili$county_temp[ili$county_temp == 'Desoto' & ili$St == 'FL'] = 'De Soto'
+ili$county_temp[ili$county_temp == 'Ostego' & ili$St == 'NY'] = 'Otsego'
+ili$county_temp[ili$county_temp == 'Dewitt' & ili$St == 'TX'] = 'De Witt'
+ili$county_temp[ili$county_temp == 'Pleasant' & ili$St == 'WV'] = 'Pleasants'
+ili$county_temp[ili$county_temp == 'Radford City' & ili$St == 'VA'] = 'Radford'
+ili$county_temp[ili$county_temp == 'Salem City' & ili$St == 'VA'] = 'Salem'
+ili$county_temp[ili$county_temp == 'Harrisonburg' & ili$St == 'VA'] = 'Harrisonburg City'
+ili$county_temp[ili$county_temp == 'Harden' & ili$St == 'TX'] = 'Hardin'
 
-# piece county and state together with a heiphen so they FIPS compliant
-ili$county = paste(ili$St,ili$county_temp,sep='-')
+ili$county = str_trim(ili$county_temp)
+counties_phys_id = count(ili$county,str_trim(ili$St), ili$Phys_ID_Code)
+write.csv(counties[,1], file = 'counties.csv')
 
 ili_cnty = ili
 #save(ili_cnty, file = 'ili_cnty.Rda')
