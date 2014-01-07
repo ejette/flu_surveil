@@ -49,9 +49,7 @@ wban_dict = {'"AK"': ['25616', '46407', '26425', '26514', '46403'],
  '"WI"': ['94854', '54908', '14837', '4803', '94818'],
  '"WV"': ['3872', '13736', '63879', '3860', '53801'],
  '"WY"': ['24027', '24062', '94053', '24057', '24166']}
- 
-keys = wban_dict.keys()
- 
+
 # this file extracts relevant station data from hourlyYYYYMM.txt files
 # It extracts: wban (station id), date, dry bulb temperature, and relative humidity (this is a percentage)
 
@@ -72,6 +70,8 @@ def format_data(input_str, dict):
     dict_ls = []
     for i in range(0,len(dict)):
         for j in range(0,len(dict[keys[i]])):
+            if len(dict[keys[i]][j]) == 4:
+                dict[keys[i]][j] = '0' + dict[keys[i]][j]
             dict_ls.append(dict[keys[i]][j])
     station_dict = {}
 
@@ -117,9 +117,7 @@ def format_data(input_str, dict):
         line = input.readline()
 
     # check if all weather stations are present in the data set
-    #print input_str + ' ' + str(len(station_dict))
-    #if len(station_dict) < 250:
-     #   print list_diff(dict_ls, station_dict.keys())
+    print list_diff(dict_ls, station_dict.keys())
 
     station_dict = {}
     input.close()
@@ -127,20 +125,22 @@ def format_data(input_str, dict):
     
 # year range you want to process
 format_data('hourly200810', wban_dict)
+format_data('hourly200811', wban_dict)
+format_data('hourly200812', wban_dict)
 
-d
-start_yr = 2008
-end_yr = 2014
+start_yr = 2009
+end_yr = 2013
 
 # months you want to process for each year
 # Note: this needs to be manipulated a bit if you're processing 2007 data because they switched variable names around
-#MM = ['01','02','03','04','05','06','07','08','09','10','11','12']
+MM = ['01','02','03','04','05','06','07','08','09','10','11','12']
 #MM = ['08','09','10','11','12']
 
 # run preprocessing on each of the text files
-#for YYYY in range(start_yr,end_yr):
- #   for i in range(0,len(MM)):
-  #      format_data('hourly'+str(YYYY)+str(MM[i]))
+for YYYY in range(start_yr,end_yr):
+    for i in range(0,len(MM)):
+        print str(YYYY)+str(MM[i])
+        format_data('hourly'+str(YYYY)+str(MM[i]),wban_dict)
 
 format_data('hourly201312')# this file extracts relevant station data from hourlyYYYYMM.txt files
 # It extracts: wban (station id), date, dry bulb temperature, and relative humidity (this is a percentage)
