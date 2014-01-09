@@ -54,7 +54,8 @@ ili$county_temp[ili$county_temp == 'Harrisonburg' & ili$St == 'VA'] = 'Harrisonb
 ili$county_temp[ili$county_temp == 'Harden' & ili$St == 'TX'] = 'Hardin'
 
 ili$county = str_trim(ili$county_temp)
-counties_phys_id = count(ili$county,str_trim(ili$St), ili$Phys_ID_Code)
+ili$state = str_trim(ili$St)
+counties = count(ili[,c('county', 'state')])
 write.csv(counties[,1], file = 'counties.csv')
 
 ili_cnty = ili
