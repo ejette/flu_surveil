@@ -56,6 +56,7 @@ ili$county_temp[ili$county_temp == 'Harden' & ili$St == 'TX'] = 'Hardin'
 ili$county = str_trim(ili$county_temp)
 ili$state = str_trim(ili$St)
 counties = count(ili[,c('county', 'state')])
+save(counties[,1:2], file = 'counties.Rda')
 write.csv(counties[,1], file = 'counties.csv')
 
 ili_cnty = ili
