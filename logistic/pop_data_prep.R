@@ -61,10 +61,10 @@ counties$fips_format[counties$fips_format == 'VALDEZ CORDOVA COUNTY, AK'] = "VAL
 
 county_FIPS = merge(counties, FIPS, by.x = "fips_format", by.y = "county_form")
 county_FIPS$county_fips = as.character(county_FIPS$county_fips)
-#county_FIPS = rbind(c('UNORGANIZED COUNTY, AK','Unorganized','AK','','09999','Unorganized County', 'AK'), county_FIPS)
-#county_FIPS = rbind(c('SAINT CROIX ISLAND COUNTY','Saint Croix Island','VI','','01000','Saint Croix Island County', 'VI'), county_FIPS)
+#county_FIPS = rbind(c('UNORGANIZED COUNTY, AK','Unorganized','AK','','00998','Unorganized County', 'AK'), county_FIPS)
+#county_FIPS = rbind(c('SAINT CROIX ISLAND COUNTY','Saint Croix Island','VI','','00999','Saint Croix Island County', 'VI'), county_FIPS)
 county_FIPS_xwalk = county_FIPS[,c('county','state','FIPS_code')]
-save(county_FIPS_xwalk, file = '~/flu_surveil_data/county_FIPS_xwalk.Rda')
+#save(county_FIPS_xwalk, file = '~/flu_surveil_data/county_FIPS_xwalk.Rda')
 
 cnt = county_FIPS$fips_format
 f = FIPS$county_form
@@ -78,8 +78,8 @@ m_county = m_county[,c('GEO.id2','county','state','respop72010')]
 
 unorg_ak_2010_pop = 19621 # from a report by Alaska Labor Statistics
 virgin_islands_2010_pop = 106405 # from the census website
-m_county = rbind(m_county, c('09999','Unorganized','AK', unorg_ak_2010_pop))
-m_county = rbind(m_county, c('01000','Saint Croix Island','VI', virgin_islands_2010_pop))
+m_county = rbind(m_county, c('00998','Unorganized','AK', unorg_ak_2010_pop))
+m_county = rbind(m_county, c('00999','Saint Croix Island','VI', virgin_islands_2010_pop))
 
 save(m_county, file = '~/flu_surveil_data/m_county.Rda')
 
@@ -185,8 +185,9 @@ mat2_matrix = as.matrix(mat2)
 pop_diff = as.data.frame(mat2_matrix - mat1_transpose)
 colnames(pop_diff) = colnames(mat2)
 fips = as.character(colnames(mat1))
-pop_diff = cbind(fips, pop_diff)
+pop_diff = cbind(format_fips(fips), pop_diff)
 colnames(pop_diff)[1] = 'FIPS_id'
 pop_diff$FIPS_id = as.character(pop_diff$FIPS_id)
 
-save(pop_diff, file = '/Users/jj/flu_surveil_data/humidity/pop_diff.Rda')
+save(pop_diff, file = '/Users/jj/flu_surveil_data/logistic_data/pop_diff.Rda')
+
