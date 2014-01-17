@@ -15,9 +15,6 @@ load("~/Dropbox/122citites/reg mats/northSouthDist.Rda")
 # load geographic difference data
 load("~/Dropbox/122citites/reg mats/eastWestDist.Rda")
 
-
-#pop_diff$FIPS_id = as.numeric(as.character(pop_diff$FIPS_id))
-
 #y$FIPS_code = format_fips(as.character(y$FIPS_code))
 colnames(y)[1] = 'FIPS_id'
 y$FIPS_num = as.numeric(y$FIPS_id)
@@ -38,4 +35,11 @@ NS_df$FIPS_num = as.numeric(NS_df$FIPS_id)
 NS = NS_df[order(NS_df$FIPS_num),]
 
 # run one logistic regression
+reg1_df = data.frame(y[,2], hum[,2], pop[,2], as.numeric(NS[,2]), as.numeric(EW[,2]))
+colnames(reg1_df) = c('y','hum','pop','ns','ew')
+log = glm(formula = y ~ hum + pop + ns + ew, family = binomial(logit),  data = reg1_df)
+
+coefs = coef(summary(log))[,'Estimate']
+p_vals = coef(summary(log))[,'Pr(>|z|)']
+# save p-values, coefficients
 # save p-values, coefficients
