@@ -49,7 +49,7 @@ wban_dict = {'"AK"': ['25616', '46407', '26425', '26514', '46403'],
  '"WI"': ['94854', '54908', '14837', '4803', '94818'],
  '"WV"': ['3872', '13736', '63879', '3860', '53801'],
  '"WY"': ['24027', '24062', '94053', '24057', '24166'],
- '"VI"': ['11624' '11640']}
+ '"VI"': ['11624', '11640']}
 
 # this file extracts relevant station data from hourlyYYYYMM.txt files
 # It extracts: wban (station id), date, dry bulb temperature, and relative humidity (this is a percentage)
@@ -143,5 +143,5 @@ for YYYY in range(start_yr,end_yr):
         print str(YYYY)+str(MM[i])
         format_data('hourly'+str(YYYY)+str(MM[i]),wban_dict)
 
-format_data('hourly201312')# this file extracts relevant station data from hourlyYYYYMM.txt files
+#format_data('hourly201312')# this file extracts relevant station data from hourlyYYYYMM.txt files
 # It extracts: wban (station id), date, dry bulb temperature, and relative humidity (this is a percentage)
