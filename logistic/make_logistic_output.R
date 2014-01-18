@@ -52,12 +52,13 @@ colnames(y) = colnames(ranks_with_fips)[2]
 for (i in 3:ncol(ranks_with_fips)){
   new_cols = c(colnames(y),colnames(ranks_with_fips)[i])
   y = cbind(y, as.numeric(county_FIPS_xwalk[,'FIPS_code'] %in% ranks_with_fips[,i]))
-  print(sum(as.numeric(county_FIPS_xwalk[,'FIPS_code'] %in% ranks_with_fips[,i])))
+  #print(sum(as.numeric(county_FIPS_xwalk[,'FIPS_code'] %in% ranks_with_fips[,i])))
   colnames(y) = new_cols
 }
 
-y = cbind(county_FIPS_xwalk[,'FIPS_code'],y)
+y = cbind(format_fips(county_FIPS_xwalk[,'FIPS_code']),y)
 colnames(y)[1] = 'FIPS_code'
-y$FIPS_code = format_fips(y$FIPS_code)
+#y$FIPS_code = format_fips(y$FIPS_code)
 
 save(y, file = '~/flu_surveil_data/logistic_data/y.Rda')
+save(y, file = "~/Dropbox/122citites/reg mats/y.Rda")
