@@ -35,11 +35,35 @@ NS_df$FIPS_num = as.numeric(NS_df$FIPS_id)
 NS = NS_df[order(NS_df$FIPS_num),]
 
 # run one logistic regression
-reg1_df = data.frame(y[,2], hum[,2], pop[,2], as.numeric(NS[,2]), as.numeric(EW[,2]))
-colnames(reg1_df) = c('y','hum','pop','ns','ew')
-log = glm(formula = y ~ hum + pop + ns + ew, family = binomial(logit),  data = reg1_df)
+reg_df = data.frame(y[,2], hum[,2], pop[,2], as.numeric(NS[,2]), as.numeric(EW[,2]))
+colnames(reg_df) = c('y','hum','pop','ns','ew')
+fit = glm(formula = y ~ hum + pop + ns + ew, family = binomial(logit),  data = reg_df)
 
-coefs = coef(summary(log))[,'Estimate']
-p_vals = coef(summary(log))[,'Pr(>|z|)']
-# save p-values, coefficients
-# save p-values, coefficients
+coefs = as.data.frame(t(coef(summary(fit))[,'Estimate']))
+coefs = cbind(as.character(colnames(y)[2]),coefs)
+colnames(coefs) = c('city','intercept','hum','pop','ns','ew')
+p_vals = as.data.frame(t(coef(summary(fit))[,'Pr(>|z|)']))
+p_vals =  cbind(as.character(colnames(y)[2]), p_vals)
+colnames(p_vals) = c('city','intercept','hum','pop','ns','ew')
+sd_err = as.data.frame(t(coef(summary(fit))[,'Std. Error']))
+sd_err =  cbind(as.character(colnames(y)[2]), sd_err)
+colnames(sd_err) = c('city','intercept','hum','pop','ns','ew')
+
+for (i in 3:(ncol(y)-1)){
+  reg_df = data.frame(y[,i], hum[,i], pop[,i], as.numeric(NS[,i]), as.numeric(EW[,i]))
+  colnames(reg_df) = c('y','hum','pop','ns','ew')
+  fit = glm(formula = y ~ hum + pop + ns + ew, family = binomial(logit),  data = reg_df)
+  coefs_temp = cbind(as.character(colnames(y)[i]),t(coef(summary(fit))[,'Estimate']))
+  colnames(coefs_temp) = c('city','intercept','hum','pop','ns','ew')
+  coefs = rbind(coefs, coefs_temp)
+  p_vals_temp = cbind(as.character(colnames(y)[i]),t(coef(summary(fit))[,'Pr(>|z|)']))
+  colnames(p_vals_temp) = c('city','intercept','hum','pop','ns','ew')
+  p_vals = rbind(p_vals,p_vals_temp)
+  sd_err_temp = cbind(as.character(colnames(y)[i]),t(coef(summary(fit))[,'Std. Error']))
+  colnames(sd_err_temp) = c('city','intercept','hum','pop','ns','ew')
+  sd_err = rbind(sd_err, sd_err_temp)
+}
+
+save(p_vals, file = '~/flu_surveil_data/logistic_data/p_vals.Rda')
+save(sd_err, file = '~/flu_surveil_data/logistic_data/sd_err.Rda')
+save(coefs, file = '~/flu_surveil_data/logistic_data/coefs.Rda')
