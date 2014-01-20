@@ -67,3 +67,15 @@ for (i in 3:(ncol(y)-1)){
 save(p_vals, file = '~/flu_surveil_data/logistic_data/p_vals.Rda')
 save(sd_err, file = '~/flu_surveil_data/logistic_data/sd_err.Rda')
 save(coefs, file = '~/flu_surveil_data/logistic_data/coefs.Rda')
+
+pdf(file = "hist_p_vals.pdf")
+## set up the new plotting device (pdf)
+par(mfrow = c(2,2))
+## draw the plot
+hist(as.numeric(p_vals$pop), main = "P-Values for Population")
+hist(as.numeric(p_vals$hum), main = "P-Values for Humidity")
+hist(as.numeric(p_vals$ns), main = "P-Values for North South Distance")
+hist(as.numeric(p_vals$ew), main = "P-Values for East West Distance")
+## close the device to do the drawing
+dev.off()
+
