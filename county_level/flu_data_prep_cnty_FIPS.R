@@ -68,11 +68,12 @@ ili_trim_cnty$FIPS_num = as.numeric(ili_trim_cnty$FIPS_id)
 
 # aggregate to county level
 ili_trim_cnty = ili_trim_cnty[order(ili_trim_cnty$FIPS_num,ili_trim_cnty$date),]
+ili_trim_cnty = ili_trim_cnty[,1:4]
 #ili_cnty_agg <- aggregate(total + total_pt ~ date + county, data = ili_trim_cnty, FUN = sum)
-ili_cnty_agg <- aggregate(. ~ date + county, data = ili_trim_cnty, FUN = sum)
+ili_cnty_agg <- aggregate(. ~ date + FIPS_id, data = ili_trim_cnty, FUN = sum)
 ili_cnty_agg$total_pt[ili_cnty_agg$cases == 0 & ili_cnty_agg$total_pt == 0] = 1
 ili_cnty_agg$total = ili_cnty_agg$cases/ifelse(ili_cnty_agg$total_pt == 0, NA, ili_cnty_agg$total_pt)
-ili_cnty_agg = ili_cnty_agg[,c('date','county','total')]
+ili_cnty_agg = ili_cnty_agg[,c('date','FIPS_id','total')]
 
 # aggregate ili providers by how many reports they submit
 #ili_county_states = unique(ili_cnty[,c(ili_cnty$county, ili_cnty$state)])
@@ -81,7 +82,7 @@ colnames(ili_cnty_counts) <- c('county','n_reports')
 
 # reshape ili data so each date has only one row
 # make sure not all cells for a provider are NA
-ili_wide_cnty <- reshape(ili_cnty_agg, v.names = 'total', idvar = 'date', timevar = 'county', direction = 'wide')
+ili_wide_cnty <- reshape(ili_cnty_agg, v.names = 'total', idvar = 'date', timevar = 'FIPS_id', direction = 'wide')
 ili_wide_cnty = ili_wide_cnty[order(ili_wide_cnty$date),]
 
 # construct a dataframe with no missing values by replacing NA with 0
