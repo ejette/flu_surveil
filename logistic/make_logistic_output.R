@@ -1,7 +1,7 @@
 library(plyr)
 library(stringr)
 source('~/flu_surveil/logistic/format_fips.R')
-load("~/flu_surveil_data/m_county.Rda")
+#load("~/flu_surveil_data/m_county.Rda")
 load("~/flu_surveil_data/ranks.Rda")
 load("~/flu_surveil_data/ranks_long_format.Rda")
 load("~/flu_surveil_data/county_FIPS_xwalk.Rda")
