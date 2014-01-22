@@ -5,6 +5,7 @@ library(stringr)
 ili <- read.csv("~/Downloads/ProviderILI.txt")
 setwd("~/flu_surveil_data")
 source('~/flu_surveil/logistic/format_fips.R')
+load('county_FIPS_xwalk.Rda')
 
 mmwr <- read.csv("mmwr.csv")
 
@@ -76,9 +77,8 @@ ili_cnty_agg$total = ili_cnty_agg$cases/ifelse(ili_cnty_agg$total_pt == 0, NA, i
 ili_cnty_agg = ili_cnty_agg[,c('date','FIPS_id','total')]
 
 # aggregate ili providers by how many reports they submit
-#ili_county_states = unique(ili_cnty[,c(ili_cnty$county, ili_cnty$state)])
-ili_cnty_counts <- as.data.frame(table(ili_cnty$county))
-colnames(ili_cnty_counts) <- c('county','n_reports')
+ili_cnty_counts <- as.data.frame(table(ili_cnty_with_FIPS$FIPS_id))
+colnames(ili_cnty_counts) <- c('FIPS_id','n_reports')
 
 # reshape ili data so each date has only one row
 # make sure not all cells for a provider are NA
@@ -86,14 +86,15 @@ ili_wide_cnty <- reshape(ili_cnty_agg, v.names = 'total', idvar = 'date', timeva
 ili_wide_cnty = ili_wide_cnty[order(ili_wide_cnty$date),]
 
 # construct a dataframe with no missing values by replacing NA with 0
-ili_wide_cnty_zeros <- ili_wide_cnty
-for (i in 1:nrow(ili_wide_cnty_zeros)){
-  ili_wide_cnty_zeros[i,is.na(ili_wide_cnty_zeros[i,])] = 0
+ili_wide_cnty_zeros_FIPS <- ili_wide_cnty
+for (i in 1:nrow(ili_wide_cnty_zeros_FIPS)){
+  ili_wide_cnty_zeros_FIPS[i,is.na(ili_wide_cnty_zeros_FIPS[i,])] = 0
 }
 
-save(ili_wide_cnty, file = 'ili_wide_cnty.Rda')
-save(ili_cnty_counts, file = 'ili_cnty_counts.Rda')
-save(ili_wide_cnty_zeros, file = 'ili_wide_cnty_zeros.Rda')
+#save(ili_wide_cnty, file = 'ili_wide_cnty.Rda')
+#save(ili_cnty_counts, file = 'ili_cnty_counts.Rda')
+save(ili_wide_cnty_zeros_FIPS, file = 'ili_wide_cnty_zeros_FIPS.Rda')
+write.table(ili_wide_cnty_zeros_FIPS, file = 'ili_wide_cnty_zeros_FIPS.csv')
 
 provider_obs = count(ili[,c('county','Phys_ID_Code')])
 provider_counts = as.data.frame(table(provider_obs[,'county']))
