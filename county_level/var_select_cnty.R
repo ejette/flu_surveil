@@ -42,11 +42,12 @@ var_select_cnty <- function(obj,vars,goal=1, r2_values, ranks){
       R2.selected<-c(R2.selected,r2s[maxR2])
 			#print(county.id)
       x = substr(colnames(pop)[maxR2],7,100)
-			x = gsub("\\."," ",x)
-			x = gsub("St ","St.",x)
-			x1 = substr(x,1,2)
-			x2 = substr(x,4,100)
-			st = paste(x1,x2,sep='-')
+			#x = gsub("\\."," ",x)
+			#x = gsub("St ","St.",x)
+			#x1 = substr(x,1,2)
+			#x2 = substr(x,4,100)
+			#st = paste(x1,x2,sep='-')
+      st = x
       state = c(state, st)
       # take out the column of the provider who gave the max R^2
 			pop <- pop[,-maxR2]
@@ -67,11 +68,12 @@ var_select_cnty <- function(obj,vars,goal=1, r2_values, ranks){
 			colnames(selected)[k] <- colnames(pop)[maxR2]
 			R2.selected <- c(R2.selected,r2s[maxR2])
 			x = substr(colnames(pop)[maxR2],7,100)
-			x = gsub("\\."," ",x)
-			x = gsub("St ","St.",x)
-			x1 = substr(x,1,2)
-			x2 = substr(x,4,100)
-			st = paste(x1,x2,sep='-')
+			#x = gsub("\\."," ",x)
+			#x = gsub("St ","St.",x)
+			#x1 = substr(x,1,2)
+			#x2 = substr(x,4,100)
+			#st = paste(x1,x2,sep='-')
+      st = x
 			state = c(state, st)
 			pop<-pop[,-maxR2]
 			}#end if/else

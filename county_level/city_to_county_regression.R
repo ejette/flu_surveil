@@ -47,8 +47,8 @@ n = ncol(flu_gold_all)
 for (i in 2:n){
    print(i)
    load('r2_values.Rda')
-   ranks = var_select_cnty(obj = flu_gold_all[,i], vars = ili_wide_no_na_cnty[,2:ncol(ili_wide_no_na_cnty)], goal = n_counties, r2_values = r2_values, ranks = ranks)
-   save(ranks,file = 'ranks.Rda')
+   ranks = var_select_cnty(obj = flu_gold_all[,i], vars = ili_wide_cnty_zeros_FIPS[,2:ncol(ili_wide_cnty_zeros_FIPS)], goal = n_counties, r2_values = r2_values, ranks = ranks)
+   save(ranks,file = 'ranks_w_0.Rda')
  }
 
 #ranks_temp = ranks[,1:123]
