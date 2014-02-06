@@ -8,8 +8,12 @@ setwd("~/Dropbox/122citites")
 load("~/Dropbox/122citites/reg mats/y.Rda")
 # load humidity difference date
 load("~/Dropbox/122citites/reg mats/humidity_diff.Rda")
+humidity_diff = unique(humidity_diff)
+
 # load population difference data
 load("~/Dropbox/122citites/reg mats/pop_diff.Rda")
+pop_diff = unique(pop_diff)
+
 # load geographic difference data
 load("~/Dropbox/122citites/reg mats/northSouthDist.Rda")
 # load geographic difference data
@@ -37,7 +41,6 @@ humidity_diff = humidity_diff[,c('FIPS_id',s)]
 humidity_diff$FIPS_num = as.numeric(humidity_diff$FIPS_id)
 hum = humidity_diff[order(humidity_diff$FIPS_id),]
 
-load("~/Dropbox/122citites/reg mats/pop_diff.Rda")
 s = colnames(pop_diff)[2:123]
 s[s == 'Urban_Honolulu_HI'] = 'Honolulu_HI'
 s[s == 'Fort_Worth_TX'] = 'Ft._Worth_TX'
@@ -59,6 +62,7 @@ EW = EW[,c('FIPS_id',s)]
 EW_df = as.data.frame(EW, stringsAsFactors = FALSE)
 EW_df$FIPS_num = as.numeric(EW_df$FIPS_id)
 EW = EW_df[order(EW_df$FIPS_num),]
+EW = unique(EW)
 
 s = colnames(NS)[2:123]
 s = s[order(s)]
@@ -67,6 +71,7 @@ NS = NS[,c('FIPS_id',s)]
 NS_df = as.data.frame(NS, stringsAsFactors = FALSE)
 NS_df$FIPS_num = as.numeric(NS_df$FIPS_id)
 NS = NS_df[order(NS_df$FIPS_num),]
+NS = unique(NS)
 
 s = colnames(GD)[2:123]
 s = s[order(s)]
@@ -75,23 +80,30 @@ GD = GD[,c('FIPS_id',s)]
 GD_df = as.data.frame(GD, stringsAsFactors = FALSE)
 GD_df$FIPS_num = as.numeric(GD_df$FIPS_id)
 GD = GD_df[order(GD_df$FIPS_num),]
+GD = unique(GD)
 
 colnames(per65)[1] = 'FIPS_id'
 per65$FIPS_num = as.numeric(as.character(per65$FIPS_id))
 per65 = per65[order(per65$FIPS_num),]
-per65$test = per65$perOver65Reported*100000
+per65$test = per65$perOver65Reported
+per65 = unique(per65)
 
 colnames(reportFluSea)[1] = 'FIPS_id'
 reportFluSea$FIPS_num = as.numeric(as.character(reportFluSea$FIPS_id))
 reportFluSea = reportFluSea[order(reportFluSea$FIPS_num),]
+reportFluSea = unique(reportFluSea)
 
 colnames(reportFullYear)[1] = 'FIPS_id'
 reportFullYear$FIPS_num = as.numeric(as.character(reportFullYear$FIPS_id))
 reportFullYear = reportFullYear[order(reportFullYear$FIPS_num),]
+reportFullYear = unique(reportFullYear)
 
 colnames(providers_per_FIPS)[1] = 'FIPS_id'
 providers_per_FIPS$FIPS_num = as.numeric(as.character(providers_per_FIPS$FIPS_id))
+providers_per_FIPS = aggregate(. ~ FIPS_id + FIPS_num, data = providers_per_FIPS,  FUN = sum)
 providers_per_FIPS = providers_per_FIPS[order(providers_per_FIPS$FIPS_num),]
+providers_per_FIPS = providers_per_FIPS[,c('FIPS_id','n_providers','FIPS_num')]
+
 
 # run one logistic regression
 reg_df = data.frame(y[,2], hum[,2], pop[,2], as.numeric(NS[,2]), as.numeric(EW[,2]), as.numeric(GD[,2]), 

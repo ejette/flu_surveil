@@ -1,0 +1,20 @@
+total 224
+-rw-r--r--  1 jj  staff  4199 Jan 20 18:38 add_FIPS_to_ILI_county.R
+-rw-r--r--  1 jj  staff  3975 Jan 23 10:14 city_to_county_regression.R
+-rw-r--r--  1 jj  staff  4931 Nov 22 05:09 city_to_county_regression.Rout
+-rw-r--r--  1 jj  staff  1633 Nov 20 20:52 county_all_format.py
+-rw-r--r--  1 jj  staff  1739 Jan 22 16:36 find_max_r2.py
+-rw-r--r--  1 jj  staff  1070 Jan 23 10:29 find_max_r2.pyc
+-rw-r--r--  1 jj  staff  4266 Nov 20 16:40 flu_data_prep_cnty.R
+-rw-r--r--  1 jj  staff  5283 Nov 18 12:26 flu_data_prep_cnty.Rout
+-rw-r--r--  1 jj  staff  5546 Jan 22 11:31 flu_data_prep_cnty_FIPS.R
+-rw-r--r--  1 jj  staff  5431 Jan 21 16:31 flu_data_prep_cnty_form.R
+-rw-r--r--@ 1 jj  staff  3264 Dec  4 11:02 flu_regression_cnty.R
+-rw-r--r--  1 jj  staff   220 Jan 17 11:45 format_fips.R
+-rw-r--r--  1 jj  staff  1007 Jan 24 10:43 make_logistic_output_w_0.R
+-rw-r--r--  1 jj  staff  1508 Dec  3 13:47 make_regions.R
+-rw-r--r--  1 jj  staff     0 Feb  5 13:49 myfile.out
+-rw-r--r--  1 jj  staff  5228 Jan 23 18:30 optimization_regression.py
+-rw-r--r--@ 1 jj  staff  2846 Nov 13 12:30 regression_diagnostics_cnty.R
+-rw-r--r--@ 1 jj  staff  2934 Nov 14 14:14 varSelect_cnty.R
+-rw-r--r--  1 jj  staff  2768 Jan 23 09:45 var_select_cnty.R
