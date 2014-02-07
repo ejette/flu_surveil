@@ -130,7 +130,7 @@ for i in range(1,n):
     covar_names = [x[6:] for x in covar_cols]
     covars_all_df[city_names[i]] = covar_names
     covars_all_df.to_csv(wd + 'covars_cnty_to_region_w_zeros.csv')
-    r2_df.to_csv(wd + 'r2s_cnty_to_region_w_zeros.csv')
+    r2_df.to_csv(wd + 'r2s_cnty_w_zeros.csv')
 
 
 
