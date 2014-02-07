@@ -1,12 +1,15 @@
 library(plyr)
-source("~/flu_surveil/county_level/format_fips.R")
+#source("~/flu_surveil/county_level/format_fips.R")
+source("~/repos/flu_surveil/county_level/format_fips.R")
+
 
 # load all possible FIPS code and extract FIPS codes
 load("~/flu_surveil_data/county_FIPS_xwalk.Rda")
 FIPS = unique(format_fips(county_FIPS_xwalk$FIPS_code))
 
 # read in optimization results
-ranks <- read.csv("~/flu_surveil_data/covars_cnty_w_zeros.csv", colClasses = c("numeric", rep("character",122)))
+#ranks <- read.csv("~/flu_surveil_data/covars_cnty_w_zeros.csv", colClasses = c("numeric", rep("character",122)))
+ranks <- read.csv("~/flu_surveil_data/covars_cnty_to_region_w_zeros.csv", colClasses = c("numeric", rep("character",11)))
 colnames(covars)[1] = 'rank'
 
 # find the counties that appeared in the top 50 providers of the first optimization (this was the national level)
