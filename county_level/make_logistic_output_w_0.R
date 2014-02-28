@@ -10,12 +10,12 @@ FIPS = unique(format_fips(county_FIPS_xwalk$FIPS_code))
 # read in optimization results
 #ranks <- read.csv("~/flu_surveil_data/covars_cnty_w_zeros.csv", colClasses = c("numeric", rep("character",122)))
 ranks <- read.csv("~/flu_surveil_data/covars_cnty_to_region_w_zeros.csv", colClasses = c("numeric", rep("character",11)))
-colnames(covars)[1] = 'rank'
+colnames(ranks)[1] = 'rank'
 
 # find the counties that appeared in the top 50 providers of the first optimization (this was the national level)
 x = ranks[,2]
 # assign a 1 if the county was chosen and a 0 if the county was not chosen as a provider
-y = as.data.frame( as.numeric(FIPS %in% x))
+y = as.data.frame(as.numeric(FIPS %in% x))
 colnames(y) = colnames(ranks)[2]
 
 # repeat for the rest of the 122 cities
