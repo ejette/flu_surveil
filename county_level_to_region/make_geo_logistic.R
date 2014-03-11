@@ -29,8 +29,8 @@ for (i in 1:loop_len){
 hhs = county_FIPS_xwalk[,c('FIPS_code','region')]
 #hhs = merge(county_FIPS_xwalk, st, by.x = 'state', by.y = 'st')
 #hhs = hhs[,3:12]
-#hhs = unique(hhs)
-save(hhs, file = '~/Dropbox/122citites/hhs.Rda')
+hhs = unique(hhs)
+save(hhs, file = '~/Dropbox/122citites/reg mats/hhs.Rda')
 
 # code adjacent regions as 2
 st$region1[st$region2 == 1] = 2
@@ -48,4 +48,4 @@ st$region10[st$region8 == 1 | st$region9 == 1] = 2
 hhs_adj = merge(county_FIPS_xwalk, st, by.x = 'state', by.y = 'st')
 hhs_adj = hhs_adj[,c(3,5:14)]
 hhs_adj = unique(hhs_adj)
-save(hhs_adj, file = '~/Dropbox/122citites/hhs_adj.Rda')
+save(hhs_adj, file = '~/Dropbox/122citites/reg mats/hhs_adj.Rda')
