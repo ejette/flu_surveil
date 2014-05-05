@@ -14,7 +14,7 @@ deaths_regions = pd.read_csv(wd+"flu_gold_regions.csv", sep = " ")
 del deaths_regions['date']
 # Optimization results
 covars_df = pd.read_csv(wd+"covars_cnty_to_region_w_zeros.csv", sep=",", dtype = object)
-n_provider = 20
+n_provider = 10
 # take out the top ten providers for each region
 top_providers = covars_df.ix[0:(n_provider-1),1:]
 
@@ -25,7 +25,7 @@ candidates_df.columns = fips
 regions = covars_df.columns.values
 deaths_names = deaths_regions.columns.values
 
-output = open(wd + 'heatmap_validation_20_providers.csv','w')
+output = open(wd + 'heatmap_validation_10_providers.csv','w')
 
 for i in range(1,len(regions)):
     print 'i ',i

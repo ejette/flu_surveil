@@ -57,6 +57,7 @@ flu_gold = flu_gold[flu_gold$week_num >= 40 | flu_gold$week_num <= 20, ]
 
 flu_gold_regions = cbind(flu_gold[,-3],flu_wide_sort[,-1])
 colnames(flu_gold_regions)[2] = 'deaths.national'
+flu_gold_regions = flu_gold_regions[order(flu_gold_regions$date),]
 save(flu_gold_regions, file = 'flu_gold_regions.Rda')
 
 write.table(flu_gold_regions, file = 'flu_gold_regions.csv', row.names = FALSE)
@@ -65,4 +66,5 @@ write.table(flu_gold_regions, file = 'flu_gold_regions.csv', row.names = FALSE)
 ili_wide_cnty_zeros_FIPS$week_num = as.numeric(substr(ili_wide_cnty_zeros_FIPS$date,5,8))
 # extract flu seasons
 ili_flu_seasons = ili_wide_cnty_zeros_FIPS[ili_wide_cnty_zeros_FIPS$week_num >= 40 | ili_wide_cnty_zeros_FIPS$week_num <= 20, -1359]
+ili_flu_seasons = ili_flu_seasons[order(ili_flu_seasons$date),]
 write.table(ili_flu_seasons, file = 'ili_flu_seasons.csv', row.names = FALSE)

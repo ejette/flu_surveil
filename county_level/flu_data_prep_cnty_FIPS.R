@@ -2,9 +2,9 @@ library(reshape)
 library(plyr)
 library(stringr)
 
-ili <- read.csv("~/Downloads/ProviderILI.txt")
+ili <- read.csv("~/flu_surveil_data/ProviderILI.txt")
 setwd("~/flu_surveil_data")
-source('~/flu_surveil/logistic/format_fips.R')
+source('~/repos/flu_surveil/logistic/format_fips.R')
 load('county_FIPS_xwalk.Rda')
 
 mmwr <- read.csv("mmwr.csv")

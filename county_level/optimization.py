@@ -12,10 +12,11 @@ os.chdir('/Users/jette/repos/flu_surveil/county_level/')
 from optimization_regression import *
 os.chdir('/Users/jette/')
 
-wd = '/Users/jj/flu_surveil_data/'
+wd = '/Users/jette/flu_surveil_data/'
 
 #candidates_df = pd.read_csv(wd+"ili_wide_cnty_zeros_FIPS.csv", sep=" ")
-candidates_df = pd.read_csv(wd+"ili_flu_seasons.csv", sep=" ")
+#candidates_df = pd.read_csv(wd+"ili_flu_seasons.csv", sep=" ")
+candidates_df = pd.read_csv(wd+"ili_lag_national.csv", sep=" ")
 del candidates_df['date']
 #del candidates_df['row_num']
 
@@ -31,7 +32,7 @@ city_names = ['region_' + x[7:] for x in cities]
 #city_names = [re.sub(' ', '_', x) for x in city_names]
 
 deaths = deaths_cities[cities[0]]
-covar_n = 50
+covar_n = 
 results = optimize(deaths, candidates_df, covar_n)
 
 # create a dataframe with the cumulative r^2 values
